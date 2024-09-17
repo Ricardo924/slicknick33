@@ -1,3 +1,4 @@
+//This code is a database that a library would use to manage library books that would ask them a series of questions through a menu system
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
