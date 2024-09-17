@@ -1,0 +1,185 @@
+#include <stdio.h>
+
+//all of the define are the prototypes that are defining what i would be using in the code
+//states the starting # for accounts
+#define NUM_ACCOUNTS 100
+
+//states range of the account #
+#define START_ACCOUNT 100
+#define END_ACCOUNT 200
+
+//states the minimum required deposit 
+#define MIN_DEPOSIT 50.0
+
+//these are all function operators that are needed for the main function to process
+
+double accounts[NUM_ACCOUNTS]; //increases the account by use of the double varible
+int open_accounts = 0; //states that when account is open the value is 0
+
+//this operation would call the account# and remove 1 from it
+int get_index(int account_number) {
+    return account_number - START_ACCOUNT;
+
+//this operation makes sure that when 
+}void initialize_accounts() {
+    for (int i = 0; i < NUM_ACCOUNTS; i++) {
+        accounts[i] = -1.0;
+    }
+
+//this would be the operation that would state the accounts starting positions
+}void display_menu() {
+    printf("O: Open account\n");
+    printf("B: Balance inquiry\n");
+    printf("D: Deposit\n");
+    printf("W: Withdraw\n");
+    printf("C: Close account\n");
+    printf("I: Compute interest\n");
+    printf("P: Print all accounts\n");
+    printf("E: Exit\n");
+}
+
+void open_account() {
+    //operation that makes sure that account open dont surpass max # of accounts
+    if (open_accounts >= NUM_ACCOUNTS) {
+        printf("Cannot open more accounts.\n");
+        return;
+    }
+    //stating that when you open an account you would need to deposit money
+    double initial_deposit;
+    printf("Initial deposit?: ");
+    scanf("%lf", &initial_deposit);
+    
+    //this operation would make sure that deposit meets requirements
+    if (initial_deposit < MIN_DEPOSIT) {
+        printf("Minimum deposit is $50.\n");
+        return;
+    }
+
+    int account_number = open_accounts + START_ACCOUNT;
+    int index = get_index(account_number);
+    accounts[index] = initial_deposit;
+    open_accounts++;
+    printf("Account number %d opened.\n", account_number);
+}
+void balance_inquiry() {
+    int account_number;
+    printf("Account number?: ");
+    scanf("%d", &account_number);
+    int index = get_index(account_number);
+    if (accounts[index] == -1.0) {
+        printf("Account is not open.\n");
+        return;
+    }
+    printf("Account number: %d\n", account_number);
+    printf("Balance: $%.2f\n", accounts[index]);
+}void deposit() {
+    int account_number;
+    double amount;
+    printf("Account number?: ");
+    scanf("%d", &account_number);
+    printf("Amount you want to deposit: ");
+    scanf("%lf", &amount);
+    int index = get_index(account_number);
+    if (accounts[index] == -1.0) {
+        printf("Account is not open.\n");
+        return;
+    }
+    double old_balance = accounts[index];
+    accounts[index] += amount;
+    printf("Account number: %d\n", account_number);
+    printf("Old balance: $%.2f\n", old_balance);
+    printf("New balance: $%.2f\n", accounts[index]);
+}
+
+void compute_interest() {
+    double interest_rate;
+    printf("Interest rate?: ");
+    scanf("%lf", &interest_rate);
+    for (int i = 0; i < NUM_ACCOUNTS; i++) {
+        if (accounts[i] != -1.0) {
+            accounts[i] += accounts[i] * interest_rate / 100;
+        }
+    }
+}void withdraw() {
+    int account_number;
+    double amount;
+    printf("Account number?: ");
+    scanf("%d", &account_number);
+    printf("Amount?: ");
+    scanf("%lf", &amount);
+    int index = get_index(account_number);
+    if (accounts[index] == -1.0) {
+        printf("Account is not open.\n");
+        return;
+    }
+    if (accounts[index] < amount) {
+        printf("Insufficient funds.\n");
+        return;
+    }
+    accounts[index] -= amount;
+    printf("Withdrawal successful. New balance: $%.2f\n", accounts[index]);
+}void print_all_accounts() {
+    printf("Account numbers and balances:\n");
+    for (int i = 0; i < NUM_ACCOUNTS; i++) {
+        if (accounts[i] != -1.0) {
+            printf("Account number: %d, Balance: $%.2f\n", i + START_ACCOUNT, accounts[i]);
+        }
+    }
+}void close_account() {
+    int account_number;
+    printf("Account number?: ");
+    scanf("%d", &account_number);
+    int index = get_index(account_number);
+    if (accounts[index] == -1.0) {
+        printf("Account is not open.\n");
+        return;
+    }
+    accounts[index] = -1.0;
+    open_accounts--;
+    printf("Account number %d closed.\n", account_number);
+}int main() {
+    initialize_accounts();
+    char choice;
+    do {
+        display_menu();
+        printf("Transaction type?: ");
+        scanf(" %c", &choice);
+        switch (choice) {
+            case 'O':
+            case 'o':
+                open_account();
+                break;
+            case 'B':
+            case 'b':
+                balance_inquiry();
+                break;
+            case 'D':
+            case 'd':
+                deposit();
+                break;
+            case 'I':
+            case 'i':
+                compute_interest();
+                break;
+            case 'P':
+            case 'p':
+                print_all_accounts();
+                break;
+            case 'W':
+            case 'w':
+                withdraw();
+                break;
+            case 'C':
+            case 'c':
+                close_account();
+                break;
+            case 'E':
+            case 'e':
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice.\n");
+        }
+    } while (choice != 'E' && choice != 'e');
+    return 0;
+}
